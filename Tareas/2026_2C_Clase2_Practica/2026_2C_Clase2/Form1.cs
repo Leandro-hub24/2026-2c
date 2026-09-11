@@ -1,5 +1,6 @@
 using Comparador.Entidad;
 using Microsoft.VisualBasic;
+using System.Globalization;
 
 namespace _2026_2C_Clase2
 {
@@ -86,6 +87,24 @@ namespace _2026_2C_Clase2
             //    cboComercio2.SelectedItem.ToString(),
             //    txtPrecio2.Text
             //    );
+
+            // Verificar que los precios no estén vacíos
+            if (string.IsNullOrWhiteSpace(txtPrecio1.Text) || string.IsNullOrWhiteSpace(txtPrecio2.Text))
+            {
+                MessageBox.Show("Los campos de precio no pueden estar vacíos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Aceptar tanto coma como punto como separador decimal
+            var p1Text = txtPrecio1.Text.Trim().Replace(',', '.');
+            var p2Text = txtPrecio2.Text.Trim().Replace(',', '.');
+
+            if (!decimal.TryParse(p1Text, NumberStyles.Number, CultureInfo.InvariantCulture, out _) ||
+                !decimal.TryParse(p2Text, NumberStyles.Number, CultureInfo.InvariantCulture, out _))
+            {
+                MessageBox.Show("Solo se pueden ingresar números en los campos de precio.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             EnviarComparacionesAAPI();
 

@@ -4,6 +4,8 @@
     ViewData["Title"] = "Comparador";
 }
 
+    
+
 <h1>Comparador</h1>
 
 <style>
@@ -219,6 +221,11 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('btnCargarGrilla').addEventListener('click', function (e) {
             e.preventDefault();
+            const valid = validarPrecios();
+            if (!valid.ok) {
+                alert(valid.mensaje);
+                return;
+            }
             enviarComparacionAlController();
         });
         document.getElementById('btnRefrescarGrilla').addEventListener('click', function () {
@@ -226,4 +233,33 @@
         });
         renderComparaciones(comparacionesIniciales);
     });
+
+    // Valida que los precios no estén vacíos y sean números (acepta coma o punto como separador)
+    function validarPrecios() {
+        const p1El = document.getElementById('precio1');
+        const p2El = document.getElementById('precio2');
+        let p1 = (p1El.value || '').trim();
+        let p2 = (p2El.value || '').trim();
+
+        if (!p1 || !p2) {
+            return { ok: false, mensaje: 'Los campos de precio no pueden estar vacíos.' };
+        }
+
+        // Normalizar coma a punto
+        p1 = p1.replace(',', '.');
+        p2 = p2.replace(',', '.');
+
+        const n1 = parseFloat(p1);
+        const n2 = parseFloat(p2);
+
+        if (!isFinite(n1) || isNaN(n1) || !isFinite(n2) || isNaN(n2)) {
+            return { ok: false, mensaje: 'Solo se pueden ingresar números en los campos de precio.' };
+        }
+
+        // Escribir los valores normalizados en los inputs para enviar consistentemente
+        p1El.value = n1.toString();
+        p2El.value = n2.toString();
+
+        return { ok: true, precio1: n1, precio2: n2 };
+    }
 </script>

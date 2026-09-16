@@ -165,29 +165,25 @@
             <th>Precio 2</th>
         </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+        @if (Model?.Comparaciones != null)
+        {
+            foreach (var c in Model.Comparaciones)
+            {
+                <tr>
+                    <td>@c.fecha</td>
+                    <td>@c.producto</td>
+                    <td>@c.comercio1</td>
+                    <td>@c.precio1</td>
+                    <td>@c.comercio2</td>
+                    <td>@c.precio2</td>
+                </tr>
+            }
+        }
+    </tbody>
 </table>
 
 <script>
-    
-    const comparacionesIniciales = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model?.Comparaciones ?? new System.Collections.Generic.List<Comparador.Entidad.Comparador>()));
-
-    function renderComparaciones(arr) {
-        const tbody = document.querySelector('#dgvComparacion tbody');
-        tbody.innerHTML = '';
-        arr.forEach(c => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${c.fecha}</td>
-                <td>${c.producto}</td>
-                <td>${c.comercio1}</td>
-                <td>${c.precio1}</td>
-                <td>${c.comercio2}</td>
-                <td>${c.precio2}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
 
     async function enviarComparacionAlController() {
         const fecha = document.getElementById('fecha').value;
@@ -219,6 +215,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+
         document.getElementById('btnCargarGrilla').addEventListener('click', function (e) {
             e.preventDefault();
             const valid = validarPrecios();
@@ -228,10 +225,11 @@
             }
             enviarComparacionAlController();
         });
+
         document.getElementById('btnRefrescarGrilla').addEventListener('click', function () {
-            renderComparaciones(comparacionesIniciales);
+            window.location.reload();
         });
-        renderComparaciones(comparacionesIniciales);
+        
     });
 
     // Valida que los precios no estén vacíos y sean números (acepta coma o punto como separador)
